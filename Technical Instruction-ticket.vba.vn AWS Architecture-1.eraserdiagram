@@ -1,0 +1,183 @@
+cloud-architecture-diagram
+
+// Diagram for ticket.vba.vn AWS Architecture
+title ticket.vba.vn AWS Architecture
+
+End User Payment System [icon: aws-cloud, color: orange] {
+  Payment WAF [icon: aws-waf]
+  Payment CloudFront [icon: aws-cloudfront]
+  Payment ALB [icon: aws-elb]
+  Payment ECS Cluster [icon: aws-ecs] {
+    Payment Web App [icon: aws-ecs]
+  }
+  Payment API Gateway [icon: aws-api-gateway]
+  Payment Lambda [icon: aws-lambda]
+  Payment SQS [icon: aws-sqs]
+  Payment Step Functions [label: "Step Functions", icon: aws-step-functions]
+  Payment RDS [icon: aws-rds]
+  Payment ElastiCache [label: "Redis", icon: aws-elasticache]
+  Payment S3 [label: "S3 Static", icon: aws-s3]
+  Payment Cognito [icon: aws-cognito]
+  Payment Secrets Manager [label: "Secrets Manager", icon: aws-secrets-manager]
+}
+
+Management System [icon: aws-cloud, color: purple] {
+  Mgmt S3 Contracts [label: "S3 Contracts", icon: aws-s3]
+  Mgmt S3 Glacier [label: "S3 Glacier", icon: aws-glacier]
+  Mgmt Lambda Processor [label: "File Processor", icon: aws-lambda]
+  Mgmt RDS [label: "PostgreSQL", icon: aws-rds]
+  Mgmt DynamoDB [icon: aws-dynamodb]
+  Mgmt SNS [icon: aws-sns]
+  Mgmt Kinesis Video [label: "Kinesis Video", icon: aws-kinesis-video-streams]
+  Mgmt MediaLive [icon: aws-medialive]
+  Mgmt MediaStore [icon: aws-mediastore]
+  Mgmt Video CloudFront [icon: aws-cloudfront]
+  Mgmt Admin ECS [label: "Admin Dashboard", icon: aws-ecs]
+  Mgmt Cognito [label: "Admin Cognito", icon: aws-cognito]
+}
+
+Analytics System [icon: aws-cloud, color: blue] {
+  Analytics Kinesis Streams [icon: aws-kinesis]
+  Analytics Kinesis Firehose [label: "Kinesis Firehose", icon: aws-kinesis-firehose]
+  Analytics Glue [icon: aws-glue]
+  Analytics MSK [icon: aws-msk]
+  Analytics S3 Data Lake [label: "S3 Data Lake", icon: aws-s3]
+  Analytics Redshift [icon: aws-redshift]
+  Analytics DynamoDB [icon: aws-dynamodb]
+  Analytics Timestream [icon: aws-timestream]
+  Analytics EMR [icon: aws-emr]
+  Analytics SageMaker [icon: aws-sagemaker]
+  Analytics Lambda Processing [icon: aws-lambda]
+  Analytics QuickSight [icon: aws-quicksight]
+  Analytics Athena [icon: aws-athena]
+  Analytics OpenSearch [icon: aws-opensearch]
+  Analytics Lambda Social [label: "Social Integration", icon: aws-lambda]
+  Analytics EventBridge Social [label: "EventBridge", icon: aws-eventbridge]
+  Analytics SQS Social [label: "Social SQS", icon: aws-sqs]
+}
+
+AI Chatbot System [icon: aws-cloud, color: green] {
+  Chatbot Lex [icon: aws-lex]
+  Chatbot Comprehend [icon: aws-comprehend]
+  Chatbot Translate [icon: aws-translate]
+  Chatbot Polly [icon: aws-polly]
+  Chatbot SageMaker [icon: aws-sagemaker]
+  Chatbot Bedrock [icon: aws-bedrock]
+  Chatbot Kendra [icon: aws-kendra]
+  Chatbot Kinesis Analytics [label: "Kinesis Analytics", icon: aws-kinesis-analytics]
+  Chatbot Lambda Logic [label: "Chatbot Logic", icon: aws-lambda]
+  Chatbot DynamoDB History [label: "Conversation DB", icon: aws-dynamodb]
+  Chatbot API Gateway [label: "Chatbot API", icon: aws-api-gateway]
+  Chatbot SNS [label: "Multi-channel SNS", icon: aws-sns]
+  Chatbot Connect [icon: aws-connect]
+}
+
+"Cross-System Integration" [icon: aws-cloud, color: gray] {
+  Integration EventBridge [label: "EventBridge Bus", icon: aws-eventbridge]
+  Integration Step Functions [label: "Orchestrator", icon: aws-step-functions]
+  Integration SQS [icon: aws-sqs]
+  Integration SNS [icon: aws-sns]
+  Integration CloudWatch [icon: aws-cloudwatch]
+  "Integration X-Ray" [icon: aws-xray]
+  Integration CloudTrail [icon: aws-cloudtrail]
+  Integration IAM [icon: aws-iam]
+  Integration KMS [icon: aws-kms]
+  Integration Config [icon: aws-config]
+  Integration GuardDuty [icon: aws-guardduty]
+  Integration CodePipeline [icon: aws-codepipeline]
+  Integration CodeBuild [icon: aws-codebuild]
+  Integration ECR [icon: aws-ecr]
+  Integration CloudFormation [icon: aws-cloudformation]
+}
+
+// Connections
+// End User Payment System
+Payment WAF > Payment CloudFront
+Payment CloudFront > Payment ALB
+Payment ALB > Payment ECS Cluster
+Payment ECS Cluster > Payment API Gateway
+Payment API Gateway > Payment Lambda
+Payment Lambda > Payment SQS
+Payment API Gateway > Payment Step Functions
+Payment Step Functions > Payment Lambda
+Payment Lambda <> Payment RDS
+Payment ECS Cluster <> Payment ElastiCache
+Payment ECS Cluster > Payment S3
+Payment ECS Cluster > Payment Cognito
+Payment ECS Cluster > Payment Secrets Manager
+
+// Management System
+Mgmt S3 Contracts > Mgmt Lambda Processor
+Mgmt Lambda Processor > Mgmt RDS
+Mgmt Lambda Processor > Mgmt DynamoDB
+Mgmt RDS > Mgmt SNS
+Mgmt DynamoDB > Mgmt SNS
+Mgmt Kinesis Video > Mgmt MediaLive
+Mgmt MediaLive > Mgmt MediaStore
+Mgmt MediaStore <> Mgmt Video CloudFront
+Mgmt Admin ECS > Mgmt Cognito
+Mgmt Admin ECS <> Mgmt RDS
+Mgmt Admin ECS <> Mgmt DynamoDB
+Mgmt Admin ECS > Mgmt S3
+
+// Analytics System
+Payment API Gateway > Analytics Kinesis Streams
+Payment Lambda > Analytics Kinesis Streams
+Mgmt Lambda Processor > Analytics Kinesis Streams
+Mgmt Kinesis Video > Analytics Kinesis Streams
+Analytics Kinesis Streams > Analytics Kinesis Firehose
+Analytics Kinesis Firehose > Analytics S3 Data Lake
+Analytics MSK > Analytics EMR
+Analytics Glue > Analytics S3 Data Lake
+Analytics Glue > Analytics Redshift
+Analytics EMR > Analytics Redshift
+Analytics Lambda Processing > Analytics OpenSearch
+Analytics Lambda Processing > Analytics Timestream
+Analytics S3 Data Lake > Analytics Athena
+Analytics Athena > Analytics QuickSight
+Analytics Redshift > Analytics QuickSight
+Analytics OpenSearch > Analytics QuickSight
+Analytics EventBridge Social > Analytics Lambda Social
+Analytics SQS Social > Analytics Lambda Social
+Analytics Lambda Social > Analytics S3 Data Lake
+
+// AI Chatbot System
+Chatbot API Gateway > Chatbot Lambda Logic
+Chatbot Lambda Logic > Chatbot Comprehend
+Chatbot Lambda Logic > Chatbot Translate
+Chatbot Lambda Logic > Chatbot Polly
+Chatbot Lambda Logic > Chatbot SageMaker
+Chatbot Lambda Logic > Chatbot Bedrock
+Chatbot Lambda Logic > Chatbot Kendra
+Chatbot Lambda Logic <> Chatbot DynamoDB History
+Chatbot API Gateway > Chatbot Lex
+Chatbot Lambda Logic > Chatbot SNS
+Chatbot Lambda Logic > Chatbot Connect
+Chatbot Kinesis Analytics > Chatbot Lambda Logic
+
+// Cross-System Integration
+Payment API Gateway > Integration EventBridge
+Mgmt Lambda Processor > Integration EventBridge
+Analytics Lambda Processing > Integration EventBridge
+Integration EventBridge > Integration Step Functions
+Integration Step Functions > Chatbot Lambda Logic
+Integration SQS > Integration Step Functions
+Integration SNS > Integration SQS
+Integration CloudTrail > Integration CloudWatch
+Integration GuardDuty > Integration CloudWatch
+Integration IAM <> Integration CloudTrail
+Integration KMS > Chatbot DynamoDB History
+Integration CodeBuild > Integration CodePipeline
+Integration CloudFormation --> Integration CodePipeline
+Integration EventBridge < Chatbot API Gateway
+Payment API Gateway < Integration Step Functions
+Mgmt Admin ECS < Integration Step Functions
+Analytics Glue < Integration Step Functions
+Payment RDS < Integration KMS
+Payment S3 < Integration KMS
+Analytics S3 Data Lake < Integration KMS
+Payment ECS Cluster < Integration CodePipeline
+Mgmt Admin ECS < Integration CodePipeline
+Analytics EMR < Integration CodePipeline
+Payment ECS Cluster <-- Integration ECR
+

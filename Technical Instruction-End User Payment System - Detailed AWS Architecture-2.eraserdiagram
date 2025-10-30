@@ -1,0 +1,60 @@
+cloud-architecture-diagram
+
+title End User Payment System - Detailed AWS Architecture
+
+End User Payment System [icon: aws-cloud, color: orange] {
+  // Security & Edge
+  Payment WAF [icon: aws-waf]
+  Payment CloudFront [icon: aws-cloudfront]
+  Payment ALB [icon: aws-elb]
+
+  // Compute (ECS)
+  Payment ECS Cluster [icon: aws-ecs] {
+    Payment Web App [icon: aws-ecs, label: "Web App"]
+  }
+
+  // API & Orchestration
+  Payment API Gateway [icon: aws-api-gateway]
+  Payment Step Functions [label: "Step Functions", icon: aws-step-functions]
+
+  // Serverless Compute & Messaging
+  Payment Lambda [icon: aws-lambda]
+  Payment SQS [icon: aws-sqs]
+
+  // Data Storage
+  Payment RDS [icon: aws-rds]
+  Payment ElastiCache [label: "Redis", icon: aws-elasticache]
+  Payment S3 [label: "S3 Static", icon: aws-s3]
+
+  // Identity & Secrets
+  Payment Cognito [icon: aws-cognito]
+  Payment Secrets Manager [label: "Secrets Manager", icon: aws-secrets-manager]
+}
+
+// Connections (Data Flow: left to right, edge to storage)
+Payment WAF > Payment CloudFront
+Payment CloudFront > Payment ALB
+Payment ALB > Payment ECS Cluster
+
+// ECS Cluster interactions
+Payment ECS Cluster > Payment API Gateway
+Payment ECS Cluster <> Payment ElastiCache
+Payment ECS Cluster > Payment S3
+Payment ECS Cluster > Payment Cognito
+Payment ECS Cluster > Payment Secrets Manager
+
+// API Gateway and Orchestration
+Payment API Gateway > Payment Lambda
+Payment API Gateway > Payment Step Functions
+Payment Step Functions > Payment Lambda
+
+// Serverless and Messaging
+Payment Lambda > Payment SQS
+Payment Lambda <> Payment RDS
+
+// Storage/Identity
+Payment ECS Cluster <> Payment ElastiCache
+Payment ECS Cluster > Payment S3
+Payment ECS Cluster > Payment Cognito
+Payment ECS Cluster > Payment Secrets Manager
+

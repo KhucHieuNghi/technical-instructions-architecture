@@ -1,0 +1,172 @@
+cloud-architecture-diagram
+
+title Analytics & AI Chatbot System Architecture (ticket.vba.vn)
+
+Analytics System [icon: aws-cloud, color: blue] {
+  // Data Ingestion
+  Analytics Data Ingestion [icon: aws-kinesis] {
+    Analytics Kinesis Streams [icon: aws-kinesis]
+    Analytics Kinesis Firehose [icon: aws-kinesis-firehose, label: "Kinesis Firehose"]
+    Analytics MSK [icon: aws-msk]
+    Analytics Lambda Social [icon: aws-lambda, label: "Social Integration"]
+    Analytics EventBridge Social [icon: aws-eventbridge, label: "EventBridge Social"]
+    Analytics SQS Social [icon: aws-sqs, label: "Social SQS"]
+  }
+
+  // Data Processing / Transformation
+  Analytics Data Processing [icon: aws-glue] {
+    Analytics Glue [icon: aws-glue]
+    Analytics EMR [icon: aws-emr]
+    Analytics Lambda Processing [icon: aws-lambda, label: "Lambda Processing"]
+  }
+
+  // Data Storage
+  Analytics Data Storage [icon: aws-s3] {
+    Analytics S3 Data Lake [icon: aws-s3, label: "S3 Data Lake"]
+    Analytics DynamoDB [icon: aws-dynamodb]
+    Analytics Timestream [icon: aws-timestream]
+  }
+
+  // Data Analysis / Visualization
+  Analytics Data Analysis [icon: aws-quicksight] {
+    Analytics Athena [icon: aws-athena]
+    Analytics Redshift [icon: aws-redshift]
+    Analytics OpenSearch [icon: aws-opensearch]
+    Analytics QuickSight [icon: aws-quicksight]
+    Analytics SageMaker [icon: aws-sagemaker]
+  }
+}
+
+AI Chatbot System [icon: aws-cloud, color: green] {
+  // User Interface / API
+  Chatbot Interface [icon: aws-api-gateway] {
+    Chatbot API Gateway [icon: aws-api-gateway, label: "API Gateway"]
+    Chatbot Lex [icon: aws-lex]
+  }
+
+  // Processing / Logic
+  Chatbot Processing [icon: aws-lambda] {
+    Chatbot Lambda Logic [icon: aws-lambda, label: "Chatbot Logic"]
+    Chatbot Kinesis Analytics [icon: aws-kinesis-analytics, label: "Kinesis Analytics"]
+  }
+
+  // NLP / ML Services
+  Chatbot NLP ML [icon: aws-sagemaker] {
+    Chatbot Comprehend [icon: aws-comprehend]
+    Chatbot Translate [icon: aws-translate]
+    Chatbot Polly [icon: aws-polly]
+    Chatbot SageMaker [icon: aws-sagemaker]
+    Chatbot Bedrock [icon: aws-bedrock]
+    Chatbot Kendra [icon: aws-kendra]
+  }
+
+  // Conversation History
+  Chatbot Conversation DB [icon: aws-dynamodb] {
+    Chatbot DynamoDB History [icon: aws-dynamodb, label: "Conversation DB"]
+  }
+
+  // Multi-channel Integration
+  "Chatbot Multi-channel" [icon: aws-sns] {
+    Chatbot SNS [icon: aws-sns, label: "Multi-channel SNS"]
+    Chatbot Connect [icon: aws-connect]
+  }
+}
+
+// Cross-System Orchestration & Security
+Integration [icon: aws-cloud, color: gray] {
+  Integration EventBridge [icon: aws-eventbridge, label: "EventBridge Bus"]
+  Integration Step Functions [icon: aws-step-functions, label: "Orchestrator"]
+  Integration SQS [icon: aws-sqs]
+  Integration SNS [icon: aws-sns]
+  Integration CloudWatch [icon: aws-cloudwatch]
+  Integration CloudTrail [icon: aws-cloudtrail]
+  Integration IAM [icon: aws-iam]
+  Integration KMS [icon: aws-kms]
+  Integration GuardDuty [icon: aws-guardduty]
+}
+
+// Data Sources (leftmost, not grouped)
+"In-house Data" [icon: database]
+Camera Stream Data [icon: video]
+Social Media Data [icon: message-circle]
+User Behavior Data [icon: activity]
+Event Data [icon: calendar]
+
+// Connections: Data Ingestion
+"In-house Data" > Analytics Kinesis Streams
+Camera Stream Data > Analytics MSK
+Social Media Data > Analytics EventBridge Social
+Social Media Data > Analytics SQS Social
+User Behavior Data > Analytics Kinesis Streams
+Event Data > Analytics Kinesis Streams
+
+// Social media integration pipeline
+Analytics EventBridge Social > Analytics Lambda Social
+Analytics SQS Social > Analytics Lambda Social
+Analytics Lambda Social > Analytics Kinesis Streams
+
+// Real-time streaming from Payment/Management (contextual, not shown as nodes)
+Analytics Kinesis Streams > Analytics Kinesis Firehose
+Analytics MSK > Analytics EMR
+
+// Data pipeline: Processing and Storage
+Analytics Kinesis Firehose > Analytics S3 Data Lake
+Analytics Glue > Analytics S3 Data Lake
+Analytics Glue > Analytics Redshift
+Analytics EMR > Analytics Redshift
+Analytics Lambda Processing > Analytics OpenSearch
+Analytics Lambda Processing > Analytics Timestream
+
+// Data Analysis / Visualization
+Analytics S3 Data Lake > Analytics Athena
+Analytics Athena > Analytics QuickSight
+Analytics Redshift > Analytics QuickSight
+Analytics OpenSearch > Analytics QuickSight
+Analytics S3 Data Lake > Analytics SageMaker
+Analytics Redshift > Analytics SageMaker
+
+// AI Chatbot System: API and Logic
+Chatbot API Gateway > Chatbot Lambda Logic
+Chatbot API Gateway > Chatbot Lex
+Chatbot Kinesis Analytics > Chatbot Lambda Logic
+
+// Chatbot Logic to NLP/ML
+Chatbot Lambda Logic > Chatbot Comprehend
+Chatbot Lambda Logic > Chatbot Translate
+Chatbot Lambda Logic > Chatbot Polly
+Chatbot Lambda Logic > Chatbot SageMaker
+Chatbot Lambda Logic > Chatbot Bedrock
+Chatbot Lambda Logic > Chatbot Kendra
+
+// Chatbot Logic to Conversation DB and Multi-channel
+Chatbot Lambda Logic <> Chatbot DynamoDB History
+Chatbot Lambda Logic > Chatbot SNS
+Chatbot Lambda Logic > Chatbot Connect
+
+// Chatbot Comprehend feedback to Analytics
+
+// Chatbot Logic queries Analytics for real-time insights
+
+// Orchestration and Event-driven flows
+Analytics Lambda Processing > Integration EventBridge
+Integration EventBridge > Integration Step Functions
+Integration Step Functions > Chatbot Lambda Logic
+Integration SQS > Integration Step Functions
+Integration SNS > Integration SQS
+
+// Security and Monitoring
+Integration CloudTrail > Integration CloudWatch
+Integration GuardDuty > Integration CloudWatch
+Integration IAM <> Integration CloudTrail
+Integration KMS > Chatbot DynamoDB History
+
+// Optional: User authentication (if contextually needed)
+// Users [icon: users] > Chatbot API Gateway
+Analytics S3 Data Lake < Chatbot Comprehend: sentiment results
+Analytics Timestream < Chatbot Comprehend: sentiment time series
+Analytics SageMaker < Chatbot Lambda Logic: recommendations
+Analytics Athena < Chatbot Lambda Logic: user/event insights
+Analytics OpenSearch < Chatbot Lambda Logic: semantic search
+Integration EventBridge < Chatbot Lambda Logic
+Analytics S3 Data Lake < Integration KMS
+
