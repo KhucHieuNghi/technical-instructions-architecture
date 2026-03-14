@@ -1,0 +1,58 @@
+cloud-architecture-diagram
+
+title Diagram Mạng & Discovery
+
+direction right
+colorMode bold
+styleMode plain
+typeface clean
+
+Namespace [icon: kubernetes, label: "quokka-prod"]
+
+Discovery {
+  CoreDNS [icon: gcp-cloud-dns, label: "CoreDNS (Service Discovery)"]
+  "portal-service.quokka-prod.svc.cluster.local" [icon: link, label: "Portal DNS"]
+  "backend-ai-service.quokka-prod.svc.cluster.local" [icon: link, label: "Backend AI DNS"]
+}
+
+Network {
+  Ingress [icon: traefik, label: "Traefik Ingress (80/443)"]
+  ClusterNet [icon: gcp-cloud-network, label: "ClusterIP Services"]
+  NodePort [icon: gcp-cloud-network, label: "NodePort 30080"]
+  NetPol [icon: shield, label: "NetworkPolicy (optional)"]
+}
+
+Workloads {
+  PortalDeploy [icon: server, label: "Deployment portal"]
+  BackendDeploy [icon: server, label: "Deployment backend-ai"]
+  PortalSvc [icon: gcp-cloud-network, label: "Service portal-service:3000"]
+  BackendSvc [icon: gcp-cloud-network, label: "Service backend-ai-service:5002"]
+}
+
+Secrets {
+  AppSecret [icon: k8s-secret, label: "Secret quokka-secrets"]
+  PullSecret [icon: key, label: "imagePullSecret regcred"]
+}
+
+Namespace > Discovery
+Namespace > Network
+Namespace > Workloads
+Namespace > Secrets
+
+Ingress > PortalSvc: path "/"
+Ingress > BackendSvc: path "/api/generate-content-ai"
+
+PortalSvc > PortalDeploy: selector app=portal
+BackendSvc > BackendDeploy: selector app=backend-ai
+
+NodePort > PortalSvc: exposes 30080
+NetPol > PortalDeploy: restricts traffic
+NetPol > BackendDeploy: restricts traffic
+
+CoreDNS <> "portal-service.quokka-prod.svc.cluster.local": resolves to Service IP
+CoreDNS <> "backend-ai-service.quokka-prod.svc.cluster.local": resolves to Service IP
+
+PortalDeploy > AppSecret: envFrom/volume
+BackendDeploy > AppSecret: envFrom
+PortalDeploy > PullSecret: imagePullSecrets
+BackendDeploy > PullSecret: imagePullSecrets

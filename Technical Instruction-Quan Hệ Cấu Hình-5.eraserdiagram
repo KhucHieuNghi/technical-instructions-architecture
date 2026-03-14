@@ -1,0 +1,62 @@
+cloud-architecture-diagram
+
+title Quan Hệ Cấu Hình
+direction right
+colorMode bold
+styleMode plain
+typeface clean
+
+NS [icon: kubernetes, label: "Namespace quokka-prod"]
+
+Access {
+  SA [icon: k8s-user, label: "ServiceAccount quokka-service-account"]
+  Role [icon: shield, label: "Role quokka-role"]
+  RB [icon: link-2, label: "RoleBinding quokka-role-binding"]
+}
+
+Workloads {
+  PortalDeploy [icon: server, label: "Deployment portal"]
+  BackendDeploy [icon: server, label: "Deployment backend-ai"]
+  PortalSvc [icon: gcp-cloud-network, label: "Service portal-service (NodePort 30080)"]
+  BackendSvc [icon: gcp-cloud-network, label: "Service backend-ai-service (ClusterIP)"]
+  HPA_Portal [icon: scale, label: "HPA portal-hpa"]
+  HPA_Backend [icon: scale, label: "HPA backend-ai-hpa"]
+}
+
+Config {
+  Secrets [icon: k8s-secret, label: "Secret quokka-secrets"]
+  PullSecret [icon: key, label: "imagePullSecret regcred"]
+}
+
+Ingressing {
+  Ingress [icon: traefik, label: "Ingress (Traefik)"]
+  CORS [icon: shield, label: "Middleware CORS"]
+  Redirect [icon: external-link, label: "Middleware Redirect HTTPS"]
+}
+
+NS > Access
+NS > Workloads
+NS > Config
+NS > Ingressing
+
+RB > Role: binds
+RB > SA: subject
+PortalDeploy > SA: serviceAccountName
+BackendDeploy > SA: serviceAccountName
+
+PortalDeploy > Secrets: envFrom/volume
+BackendDeploy > Secrets: envFrom
+
+PortalDeploy > PullSecret: imagePullSecrets
+BackendDeploy > PullSecret: imagePullSecrets
+
+Ingress > CORS: applies
+Ingress > Redirect: applies
+Ingress > PortalSvc: path "/"
+Ingress > BackendSvc: path "/api/generate-content-ai"
+
+PortalSvc > PortalDeploy: selector app=portal
+BackendSvc > BackendDeploy: selector app=backend-ai
+
+HPA_Portal > PortalDeploy: scales
+HPA_Backend > BackendDeploy: scales

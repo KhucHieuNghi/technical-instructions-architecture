@@ -1,0 +1,35 @@
+flowchart-diagram
+
+title Flow
+direction right
+
+Browser [shape: oval, icon: Browser]
+
+
+Orchestrator (k8s) [color: green] {
+  Reverse proxy (ingress) [icon: zap, color: green]
+  "/:path" [shape: diamond, icon: package]
+  Appshell [shape: oval, icon: package, color: yellow]
+  Other App [shape: oval, icon: package, color: Orange]
+  "/:path" [shape: diamond, icon: package]
+  "cms" [shape: diamond, icon: package]
+
+  "*" [shape: diamond, icon: package]
+
+  CMS [shape: oval, icon: package, color: Orange]
+}
+
+Browser <-> Reverse proxy (ingress)
+Reverse proxy (ingress) > "*"
+
+"*" > Appshell
+
+Appshell > "/:path" > Other App
+Appshell > "cms" > CMS
+
+
+
+// ":path Proxy?" > Other App
+
+
+

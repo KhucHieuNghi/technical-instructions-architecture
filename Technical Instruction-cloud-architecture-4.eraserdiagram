@@ -1,0 +1,57 @@
+cloud-architecture-diagram
+
+direction right
+colorMode bold
+styleMode plain
+typeface clean
+
+Client [icon: user]
+
+Edge {
+  Cloudflare [icon: cloudflare, label: "Cloudflare"]
+  Route53 [icon: aws-route-53, label: "Route 53"]
+  CloudFront [icon: aws-cloudfront, label: "CloudFront"]
+}
+
+API {
+  APIGW [icon: aws-api-gateway, label: "API Gateway"]
+  Lambda [icon: aws-lambda]
+}
+
+Compute {
+  EC2 [icon: aws-ec2, label: "EC2"]
+  k3s [icon: kubernetes, label: "k3s"]
+  BE [label: "service-be"]
+}
+
+Data {
+  StaticAssets [icon: aws-s3, label: "S3 Static"]
+  Uploads [icon: aws-s3, label: "S3 Uploads"]
+  DB [icon: aws-dynamodb, label: "DynamoDB"]
+}
+
+Observability {
+  Logs [icon: aws-cloudwatch, label: "CloudWatch"]
+}
+
+Client > Cloudflare: DNS+WAF [color: "#3399ff"]
+Cloudflare > Route53: authoritative [color: "#3399ff"]
+Cloudflare > CloudFront: CDN [color: "#3399ff"]
+CloudFront > StaticAssets: origin [color: "#3399ff"]
+
+Client > APIGW: HTTPS API [color: "#3399ff"]
+APIGW > Lambda: /api/* [color: green]
+
+EC2 > k3s: orchestrate [color: gray]
+k3s > BE: deploy [color: gray]
+
+BE <> DB: read/write [color: green]
+BE > StaticAssets: publish SSR assets [color: "#3399ff"]
+BE > Uploads: presigned URLs [color: green]
+Client > Uploads: PUT (presigned) [color: "#3399ff"]
+Uploads > Lambda: ObjectCreated [color: orange]
+Lambda > DB: update metadata [color: green]
+
+Logs - APIGW: metrics [color: gray]
+Logs - Lambda: metrics [color: gray]
+Logs - BE: logs [color: gray]
